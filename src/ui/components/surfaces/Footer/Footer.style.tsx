@@ -32,6 +32,6 @@ export const AppList = styled('ul')`
 
   img {
     width: 122px;
-    
+    margin-top: ${({ theme }) => theme.spacing(2)};
   }
 `;
