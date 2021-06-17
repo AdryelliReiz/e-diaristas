@@ -1,4 +1,4 @@
-import { Button, Typography, Container } from '@material-ui/core';
+import { Button, Typography, Container, CircularProgress } from '@material-ui/core';
 import {
   FormElementContainer,
   ProfessionalsPaper,
@@ -12,7 +12,17 @@ import TextFieldMask from 'ui/components/inputs/TextFieldMask/TextFielMask';
 
 
 export default function Home() {
-  const { cep, setCep, validCep } = useIndex();
+  const {
+    cep,
+    setCep,
+    validCep,
+    seekProfessionals,
+    error,
+    dayLaborers,
+    searchDone,
+    loading,
+    remainingDaily,
+   } = useIndex();
 
   return (
     <div>
@@ -32,57 +42,68 @@ export default function Home() {
             onChange={(event) => setCep(event.target.value)}
           />
 
-          <Typography color={'error'} >{validCep}</Typography>
+          {error && <Typography color={'error'} >{error}</Typography>}
 
           <Button
             variant={'contained'}
             color={'secondary'}
-            sx={{width: '220px'}}
+            sx={{ width: '220px' }}
+            disabled={!validCep || loading}
+            onClick={() => seekProfessionals(cep)}
           >
-            Buscar
+            {loading ?
+              <CircularProgress
+                size={20}
+              /> : 'Buscar'
+            }
+
           </Button>
         </FormElementContainer>
         
-        <ProfessionalsPaper>
-          <ProfessionalsContainer>
-            <UserInformation
-              name={'Adryelli Reiz'}
-              picture={''}
-              rating={4}
-              description={'Rio Real - BA'}
-            />
-            <UserInformation
-              name={'Adryelli Reiz'}
-              picture={''}
-              rating={4}
-              description={'Rio Real - BA'}
-            />
-            <UserInformation
-              name={'Adryelli Reiz'}
-              picture={''}
-              rating={4}
-              description={'Rio Real - BA'}
-            />
-            <UserInformation
-              name={'Adryelli Reiz'}
-              picture={''}
-              rating={4}
-              description={'Rio Real - BA'}
-            />
-            <UserInformation
-              name={'Adryelli Reiz'}
-              picture={''}
-              rating={4}
-              description={'Rio Real - BA'}
-            />
-            <UserInformation
-              name={'Adryelli Reiz'}
-              picture={''}
-              rating={4}
-              description={'Rio Real - BA'}
-              />
+        {searchDone &&
+          (dayLaborers.length > 0 ? (
+          <ProfessionalsPaper>
+            <ProfessionalsContainer>
+
+              {dayLaborers.map((item, index) => {
+                return (
+                  <UserInformation
+                    key={index}
+                    name={item.nome_completo}
+                    picture={item.foto_usuario}
+                    rating={item.reputacao}
+                    description={item.cidade}
+                  />
+                )
+              })}
+              
             </ProfessionalsContainer>
-        </ProfessionalsPaper>
+            
+            {remainingDaily > 0 && (
+              <Container sx={{textAlign: 'center'}} >
+                <Typography sx={{mt: 5}} >
+                  ...e mais {remainingDaily}
+                  {remainingDaily > 1 ? 'profissionais atendem' : 'profissional atende'}
+                   ao seu endereco
+                </Typography>
+                <Button
+                  variant={'contained'}
+                  color={'secondary'}
+                  sx={{mt: 5}}
+                >
+                  Contartar um profissional</Button>
+              </Container>
+            )}
+          </ProfessionalsPaper>)
+          :
+          (
+            <Typography align={'center'} color={'textPrimary'} >
+              Ainda nao temos nenhuma diarista disponivel em sua regiao
+            </Typography>
+          )
+        )}
+
+        
       </Container>
   
       
